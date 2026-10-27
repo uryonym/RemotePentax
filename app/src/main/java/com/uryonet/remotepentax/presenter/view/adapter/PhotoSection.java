@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -46,7 +45,10 @@ public class PhotoSection extends StatelessSection implements FilterableSection 
         this.context = context;
     }
 
-    protected void onPhotoClicked(View view, @NonNull String photoFile, @NonNull List<String> photoUrlList) {
+    protected void onPhotoClicked(View view, @NonNull String photoFile, @NonNull List<String> photoUrlList, int position) {
+    }
+
+    protected void onPhotoLongClicked(View view, @NonNull String photoFile, @NonNull List<String> photoUrlList, int position) {
     }
 
     @Override
@@ -79,10 +81,20 @@ public class PhotoSection extends StatelessSection implements FilterableSection 
         Glide.with(context).load(RetrofitInstance.BASE_URL + "photos/" + name + "/" + filterFiles.get(position) + "?size=thumb").apply(new RequestOptions().override(ScreenWidthHalf, ScreenWidthHalf)).into(itemHolder.ivPhoto);
         itemHolder.tvPhoto.setText(filterFiles.get(position));
 
+        // アイテムをタップ時のイベント
         itemHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onPhotoClicked(v, filterFiles.get(position), filterPhotoUrlList);
+                onPhotoClicked(v, filterFiles.get(position), filterPhotoUrlList, position);
+            }
+        });
+
+        // アイテムをロングタップ時のイベント
+        itemHolder.rootView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onPhotoLongClicked(v, filterFiles.get(position), filterPhotoUrlList, position);
+                return false;
             }
         });
 
@@ -100,6 +112,7 @@ public class PhotoSection extends StatelessSection implements FilterableSection 
         headerHolder.tvTitle.setText(name);
     }
 
+    // アイテムの表示内容の切り替え（JPG or RAW or ALL）
     @Override
     public void filter(String query) {
         if (query.equals("ALL")) {

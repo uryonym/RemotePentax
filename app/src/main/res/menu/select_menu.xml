@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".MainActivity">
+
+    <!--  Toolbar ActionMode Menu Items  -->
+    <item
+        android:id="@+id/action_download"
+        android:icon="@drawable/arrow_down_bold_box"
+        android:orderInCategory="100"
+        android:title="@string/download"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_selectall"
+        android:icon="@drawable/select_all"
+        android:orderInCategory="100"
+        android:title="@string/allselect"
+        app:showAsAction="always" />
+</menu>
+

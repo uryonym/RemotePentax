@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,7 +39,10 @@ public class PhotoListFragment extends Fragment implements PhotoListContract.Vie
     SectionedRecyclerViewAdapter sectionAdapter;
     PhotoListPresenter photoListPresenter;
 
-    int currentId = R.id.rbAll;
+    private ActionMode actionMode;
+    private int currentId = R.id.rbAll;
+    private boolean isMultSelect = false;
+    private List<String> selectedUrls = new ArrayList<>();
 
     public PhotoListFragment(){};
 
@@ -152,14 +156,34 @@ public class PhotoListFragment extends Fragment implements PhotoListContract.Vie
 
             for(PhotoDir dir : photoDirList) {
                 sectionAdapter.addSection(new PhotoSection(dir.getName(), dir.getFiles(), photoUrlList, getContext()) {
+
+                    // アイテムタップ時イベント
                     @Override
-                    protected void onPhotoClicked(View view, @NonNull String photoFile, @NonNull List<String> photoUrlList) {
-                        super.onPhotoClicked(view, photoFile, photoUrlList);
+                    protected void onPhotoClicked(View view, @NonNull String photoFile, @NonNull List<String> photoUrlList, int position) {
+                        super.onPhotoClicked(view, photoFile, photoUrlList, position);
+                        if (isMultSelect) {
+//                            multiSelect(photoFile, position);
+                        } else {
+                            PhotoPagerFragment ppFragment = PhotoPagerFragment.newInstance(photoFile, (ArrayList<String>) photoUrlList);
+                            getFragmentManager().beginTransaction().addToBackStack(PhotoPagerFragment.TAG).replace(R.id.fragment_container, ppFragment).commit();
+                        }
+                    }
+
+                    // アイテムロングタップ時イベント
+                    @Override
+                    protected void onPhotoLongClicked(View view, @NonNull String photoFile, @NonNull List<String> photoUrlList, int position) {
+                        super.onPhotoClicked(view, photoFile, photoUrlList, position);
+                        Log.d(TAG, "Long Tap Event");
+                        if (!isMultSelect) {
+                            selectedUrls = new ArrayList<>();
+                            isMultSelect = true;
+                        }
 
                         PhotoPagerFragment ppFragment = PhotoPagerFragment.newInstance(photoFile, (ArrayList<String>) photoUrlList);
 
                         getFragmentManager().beginTransaction().addToBackStack(PhotoPagerFragment.TAG).replace(R.id.fragment_container, ppFragment).commit();
                     }
+
                 });
             }
             rvPhotoList.setAdapter(sectionAdapter);

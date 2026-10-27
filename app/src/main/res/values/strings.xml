@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">RemotePentax</string>
+
+    <!--Action Mode Menu Item-->
+    <string name="download">Download</string>
+    <string name="allselect">AllSelect</string>
 </resources>
